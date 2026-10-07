@@ -1,0 +1,2110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Class Advisor Dashboard - CampusAI</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #222;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 230px;
+            height: 100vh;
+            background: #172554;
+            color: white;
+            padding: 25px 15px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar button {
+            width: 100%;
+            padding: 13px;
+            margin: 7px 0;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .sidebar button:hover {
+            background: #2563eb;
+        }
+
+        .logout-btn {
+            margin-top: 30px !important;
+            background: #dc2626 !important;
+            text-align: center !important;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 230px;
+            padding: 30px;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .top-bar h1 {
+            color: #172554;
+            margin-bottom: 5px;
+        }
+
+        /* SECTIONS */
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* CARD */
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            color: #172554;
+            margin-bottom: 20px;
+        }
+
+        /* SELECTORS */
+
+        .selector-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        select,
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        /* SUBJECTS */
+
+        .subject-boxes {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .subject-item {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .subject-item label {
+            color: #172554;
+        }
+
+        /* BUTTONS */
+
+        .save-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 11px 20px;
+            border-radius: 7px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .save-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .save-all-btn {
+            background: #16a34a;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 7px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .save-all-btn:hover {
+            background: #15803d;
+        }
+
+        /* MESSAGES */
+
+        .success-message {
+            color: #15803d;
+            font-weight: bold;
+            margin-top: 12px;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-weight: bold;
+            margin-top: 12px;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        /* TABLE */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 11px;
+            text-align: center;
+        }
+
+        th {
+            background: #172554;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .mark-input,
+        .attendance-input {
+            width: 100px !important;
+            text-align: center;
+        }
+
+        /* DASHBOARD */
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .dashboard-box {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .dashboard-box h3 {
+            color: #172554;
+            margin-bottom: 10px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                width: 190px;
+            }
+
+            .main {
+                margin-left: 190px;
+            }
+
+            .selector-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .selector-row,
+            .subject-boxes {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     SIDEBAR
+========================= -->
+
+<div class="sidebar">
+
+    <h2>CampusAI</h2>
+
+    <button onclick="showSection('dashboard')">
+        🏠 Dashboard
+    </button>
+
+    <button onclick="showSection('subjects')">
+        📚 Subjects
+    </button>
+
+    <button onclick="showSection('marks')">
+        📝 Marks
+    </button>
+
+    <button onclick="showSection('attendance')">
+        📊 Attendance
+    </button>
+
+    <button class="logout-btn" onclick="logout()">
+        🚪 Logout
+    </button>
+
+</div>
+
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<div class="main">
+
+    <div class="top-bar">
+
+        <h1>Class Advisor Dashboard</h1>
+
+        <p>
+            Manage subjects, marks and attendance
+        </p>
+
+    </div>
+
+
+
+    <!-- =========================
+         DASHBOARD
+    ========================= -->
+
+    <div id="dashboard" class="section active">
+
+        <div class="card">
+
+            <h2>Welcome Class Advisor</h2>
+
+            <div class="dashboard-grid">
+
+                <div class="dashboard-box">
+
+                    <h3>Classes</h3>
+
+                    <p>AIML-A</p>
+                    <p>AIML-B</p>
+
+                </div>
+
+
+                <div class="dashboard-box">
+
+                    <h3>Semesters</h3>
+
+                    <p>Semester 1 - 8</p>
+
+                </div>
+
+
+                <div class="dashboard-box">
+
+                    <h3>Internal Exams</h3>
+
+                    <p>Internal 1</p>
+                    <p>Internal 2</p>
+                    <p>Internal 3</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         SUBJECT MANAGEMENT
+    ========================= -->
+
+    <div id="subjects" class="section">
+
+        <div class="card">
+
+            <h2>Subject Management</h2>
+
+            <div class="selector-row">
+
+                <div class="form-group">
+
+                    <label>Class</label>
+
+                    <select
+                        id="subjectClass"
+                        onchange="loadSubjects()"
+                    >
+
+                        <option value="AIML-A">
+                            AIML-A
+                        </option>
+
+                        <option value="AIML-B">
+                            AIML-B
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Semester</label>
+
+                    <select
+                        id="subjectSemester"
+                        onchange="loadSubjects()"
+                    >
+
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <p>
+                Enter the actual subject names for this class and semester.
+            </p>
+
+
+            <div class="subject-boxes">
+
+                <div class="subject-item">
+
+                    <label>Subject 1</label>
+
+                    <input
+                        type="text"
+                        id="subject1"
+                        placeholder="Example: DBMS"
+                    >
+
+                </div>
+
+
+                <div class="subject-item">
+
+                    <label>Subject 2</label>
+
+                    <input
+                        type="text"
+                        id="subject2"
+                        placeholder="Example: Software Engineering"
+                    >
+
+                </div>
+
+
+                <div class="subject-item">
+
+                    <label>Subject 3</label>
+
+                    <input
+                        type="text"
+                        id="subject3"
+                        placeholder="Example: Python"
+                    >
+
+                </div>
+
+
+                <div class="subject-item">
+
+                    <label>Subject 4</label>
+
+                    <input
+                        type="text"
+                        id="subject4"
+                        placeholder="Example: Computer Networks"
+                    >
+
+                </div>
+
+
+                <div class="subject-item">
+
+                    <label>Subject 5</label>
+
+                    <input
+                        type="text"
+                        id="subject5"
+                        placeholder="Example: Artificial Intelligence"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="save-btn"
+                onclick="saveSubjects()"
+            >
+                Save Subjects
+            </button>
+
+
+            <p id="subjectMessage"></p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         MARKS
+    ========================= -->
+
+    <div id="marks" class="section">
+
+        <div class="card">
+
+            <h2>Marks Management</h2>
+
+
+            <div class="selector-row">
+
+                <div class="form-group">
+
+                    <label>Class</label>
+
+                    <select
+                        id="marksClass"
+                        onchange="updateMarksSubjects()"
+                    >
+
+                        <option value="AIML-A">
+                            AIML-A
+                        </option>
+
+                        <option value="AIML-B">
+                            AIML-B
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Semester</label>
+
+                    <select
+                        id="marksSemester"
+                        onchange="updateMarksSubjects()"
+                    >
+
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Internal</label>
+
+                    <select id="marksInternal">
+
+                        <option value="1">
+                            Internal 1
+                        </option>
+
+                        <option value="2">
+                            Internal 2
+                        </option>
+
+                        <option value="3">
+                            Internal 3
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Subject</label>
+
+                    <select id="marksSubject"></select>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="save-btn"
+                onclick="loadMarksStudents()"
+            >
+                Load Students
+            </button>
+
+
+            <div id="marksTableContainer">
+
+                <p class="empty-message">
+                    Select class, semester, internal and subject,
+                    then click Load Students.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         ATTENDANCE
+    ========================= -->
+
+    <div id="attendance" class="section">
+
+        <div class="card">
+
+            <h2>Attendance Management</h2>
+
+
+            <div class="selector-row">
+
+                <div class="form-group">
+
+                    <label>Class</label>
+
+                    <select
+                        id="attendanceClass"
+                        onchange="updateAttendanceSubjects()"
+                    >
+
+                        <option value="AIML-A">
+                            AIML-A
+                        </option>
+
+                        <option value="AIML-B">
+                            AIML-B
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Semester</label>
+
+                    <select
+                        id="attendanceSemester"
+                        onchange="updateAttendanceSubjects()"
+                    >
+
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Internal</label>
+
+                    <select id="attendanceInternal">
+
+                        <option value="1">
+                            Internal 1
+                        </option>
+
+                        <option value="2">
+                            Internal 2
+                        </option>
+
+                        <option value="3">
+                            Internal 3
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Subject</label>
+
+                    <select id="attendanceSubject"></select>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="save-btn"
+                onclick="loadAttendanceStudents()"
+            >
+                Load Students
+            </button>
+
+
+            <div id="attendanceTableContainer">
+
+                <p class="empty-message">
+                    Select class, semester, internal and subject,
+                    then click Load Students.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+
+/* =====================================================
+   SECTION NAVIGATION
+===================================================== */
+
+function showSection(sectionId) {
+
+    const sections =
+        document.querySelectorAll(".section");
+
+
+    sections.forEach(section => {
+
+        section.classList.remove("active");
+
+    });
+
+
+    const selectedSection =
+        document.getElementById(sectionId);
+
+
+    if (selectedSection) {
+
+        selectedSection.classList.add("active");
+
+    }
+
+
+    if (sectionId === "subjects") {
+
+        loadSubjects();
+
+    }
+
+
+    if (sectionId === "marks") {
+
+        updateMarksSubjects();
+
+    }
+
+
+    if (sectionId === "attendance") {
+
+        updateAttendanceSubjects();
+
+    }
+
+}
+
+
+
+/* =====================================================
+   SUBJECT MANAGEMENT
+===================================================== */
+
+function getSubjectStorageKey() {
+
+    const className =
+        document.getElementById(
+            "subjectClass"
+        ).value;
+
+
+    const semester =
+        document.getElementById(
+            "subjectSemester"
+        ).value;
+
+
+    return "subjects_" +
+        className +
+        "_" +
+        semester;
+
+}
+
+
+
+function saveSubjects() {
+
+    const subjects = [
+
+        document.getElementById("subject1").value.trim(),
+
+        document.getElementById("subject2").value.trim(),
+
+        document.getElementById("subject3").value.trim(),
+
+        document.getElementById("subject4").value.trim(),
+
+        document.getElementById("subject5").value.trim()
+
+    ];
+
+
+    const key =
+        getSubjectStorageKey();
+
+
+    localStorage.setItem(
+        key,
+        JSON.stringify(subjects)
+    );
+
+
+    document.getElementById(
+        "subjectMessage"
+    ).className =
+        "success-message";
+
+
+    document.getElementById(
+        "subjectMessage"
+    ).innerText =
+        "Subjects saved successfully!";
+
+
+    updateMarksSubjects();
+
+    updateAttendanceSubjects();
+
+}
+
+
+
+function loadSubjects() {
+
+    const key =
+        getSubjectStorageKey();
+
+
+    const savedSubjects =
+        JSON.parse(
+            localStorage.getItem(key)
+        ) || [];
+
+
+    document.getElementById("subject1").value =
+        savedSubjects[0] || "";
+
+
+    document.getElementById("subject2").value =
+        savedSubjects[1] || "";
+
+
+    document.getElementById("subject3").value =
+        savedSubjects[2] || "";
+
+
+    document.getElementById("subject4").value =
+        savedSubjects[3] || "";
+
+
+    document.getElementById("subject5").value =
+        savedSubjects[4] || "";
+
+
+    document.getElementById(
+        "subjectMessage"
+    ).innerText = "";
+
+}
+
+
+
+function getSubjects(className, semester) {
+
+    const key =
+        "subjects_" +
+        className +
+        "_" +
+        semester;
+
+
+    return JSON.parse(
+        localStorage.getItem(key)
+    ) || [];
+
+}
+
+
+
+/* =====================================================
+   MARKS SUBJECT DROPDOWN
+===================================================== */
+
+function updateMarksSubjects() {
+
+    const className =
+        document.getElementById(
+            "marksClass"
+        ).value;
+
+
+    const semester =
+        document.getElementById(
+            "marksSemester"
+        ).value;
+
+
+    const subjectDropdown =
+        document.getElementById(
+            "marksSubject"
+        );
+
+
+    const subjects =
+        getSubjects(
+            className,
+            semester
+        );
+
+
+    subjectDropdown.innerHTML = "";
+
+
+    const validSubjects =
+        subjects.filter(
+            subject =>
+                subject.trim() !== ""
+        );
+
+
+    if (validSubjects.length === 0) {
+
+        const option =
+            document.createElement("option");
+
+
+        option.value = "";
+
+
+        option.textContent =
+            "No subjects added";
+
+
+        subjectDropdown.appendChild(
+            option
+        );
+
+
+        return;
+    }
+
+
+    validSubjects.forEach(subject => {
+
+        const option =
+            document.createElement("option");
+
+
+        option.value = subject;
+
+
+        option.textContent = subject;
+
+
+        subjectDropdown.appendChild(
+            option
+        );
+
+    });
+
+}
+
+
+
+/* =====================================================
+   ATTENDANCE SUBJECT DROPDOWN
+===================================================== */
+
+function updateAttendanceSubjects() {
+
+    const className =
+        document.getElementById(
+            "attendanceClass"
+        ).value;
+
+
+    const semester =
+        document.getElementById(
+            "attendanceSemester"
+        ).value;
+
+
+    const subjectDropdown =
+        document.getElementById(
+            "attendanceSubject"
+        );
+
+
+    const subjects =
+        getSubjects(
+            className,
+            semester
+        );
+
+
+    subjectDropdown.innerHTML = "";
+
+
+    const validSubjects =
+        subjects.filter(
+            subject =>
+                subject.trim() !== ""
+        );
+
+
+    if (validSubjects.length === 0) {
+
+        const option =
+            document.createElement("option");
+
+
+        option.value = "";
+
+
+        option.textContent =
+            "No subjects added";
+
+
+        subjectDropdown.appendChild(
+            option
+        );
+
+
+        return;
+    }
+
+
+    validSubjects.forEach(subject => {
+
+        const option =
+            document.createElement("option");
+
+
+        option.value = subject;
+
+
+        option.textContent = subject;
+
+
+        subjectDropdown.appendChild(
+            option
+        );
+
+    });
+
+}
+
+
+
+/* =====================================================
+   LOAD MARKS STUDENTS
+===================================================== */
+
+async function loadMarksStudents() {
+
+    const className =
+        document.getElementById(
+            "marksClass"
+        ).value;
+
+
+    const semester =
+        document.getElementById(
+            "marksSemester"
+        ).value;
+
+
+    const internal =
+        document.getElementById(
+            "marksInternal"
+        ).value;
+
+
+    const subject =
+        document.getElementById(
+            "marksSubject"
+        ).value;
+
+
+    const container =
+        document.getElementById(
+            "marksTableContainer"
+        );
+
+
+    if (!subject) {
+
+        container.innerHTML = `
+
+            <p class="empty-message">
+                Please add subjects first.
+            </p>
+
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML = `
+
+        <p class="empty-message">
+            Loading students...
+        </p>
+
+    `;
+
+
+    try {
+
+        const studentResponse =
+            await fetch(
+                "http://localhost:5000/students/" +
+                encodeURIComponent(
+                    className
+                )
+            );
+
+
+        if (!studentResponse.ok) {
+
+            throw new Error(
+                "Unable to load students"
+            );
+
+        }
+
+
+        const studentData =
+            await studentResponse.json();
+
+
+        const students =
+            studentData.students || [];
+
+
+        if (!students.length) {
+
+            container.innerHTML = `
+
+                <p class="empty-message">
+                    No students found for ${className}.
+                </p>
+
+            `;
+
+            return;
+        }
+
+
+        let existingMarks = {};
+
+
+        try {
+
+            const marksResponse =
+                await fetch(
+                    "http://localhost:5000/marks-class/" +
+                    encodeURIComponent(className) +
+                    "/" +
+                    semester +
+                    "/" +
+                    internal +
+                    "/" +
+                    encodeURIComponent(subject)
+                );
+
+
+            if (marksResponse.ok) {
+
+                const marksData =
+                    await marksResponse.json();
+
+
+                const marks =
+                    Array.isArray(marksData)
+                        ? marksData
+                        : (
+                            marksData.marks || []
+                        );
+
+
+                marks.forEach(mark => {
+
+                    existingMarks[
+                        mark.register_no
+                    ] = mark.mark;
+
+                });
+
+            }
+
+        } catch (error) {
+
+            console.log(
+                "Existing marks could not be loaded:",
+                error
+            );
+
+        }
+
+
+        let html = `
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>S.No</th>
+                        <th>Register No</th>
+                        <th>Student Name</th>
+                        <th>Mark</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+        `;
+
+
+        students.forEach(
+            (student, index) => {
+
+                const oldMark =
+                    existingMarks[
+                        student.register_no
+                    ] ?? "";
+
+
+                html += `
+
+                    <tr>
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+                            ${student.register_no}
+                        </td>
+
+                        <td>
+                            ${student.name}
+                        </td>
+
+                        <td>
+
+                            <input
+                                type="number"
+                                class="mark-input"
+                                min="0"
+                                max="100"
+                                value="${oldMark}"
+                                data-register="${student.register_no}"
+                            >
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        );
+
+
+        html += `
+
+                </tbody>
+
+            </table>
+
+            <button
+                class="save-all-btn"
+                onclick="saveAllMarks()"
+            >
+                Save All Marks
+            </button>
+
+        `;
+
+
+        container.innerHTML =
+            html;
+
+
+    } catch (error) {
+
+        console.error(
+            "Load students error:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+            <p class="error-message">
+                Unable to connect to CampusAI server.
+                Please make sure server.js is running.
+            </p>
+
+        `;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   SAVE MARKS
+===================================================== */
+
+async function saveAllMarks() {
+
+    const className =
+        document.getElementById(
+            "marksClass"
+        ).value;
+
+
+    const semester =
+        document.getElementById(
+            "marksSemester"
+        ).value;
+
+
+    const internal =
+        document.getElementById(
+            "marksInternal"
+        ).value;
+
+
+    const subject =
+        document.getElementById(
+            "marksSubject"
+        ).value;
+
+
+    if (!subject) {
+
+        alert(
+            "Please select a subject."
+        );
+
+        return;
+    }
+
+
+    const inputs =
+        document.querySelectorAll(
+            ".mark-input"
+        );
+
+
+    for (const input of inputs) {
+
+        const registerNo =
+            input.dataset.register;
+
+
+        const markValue =
+            input.value.trim();
+
+
+        if (markValue === "") {
+            continue;
+        }
+
+
+        const mark =
+            Number(markValue);
+
+
+        if (
+            isNaN(mark) ||
+            mark < 0 ||
+            mark > 100
+        ) {
+
+            alert(
+                "Mark must be between 0 and 100."
+            );
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "http://localhost:5000/marks",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            register_no:
+                                registerNo,
+
+                            class_name:
+                                className,
+
+                            semester:
+                                Number(semester),
+
+                            internal_exam:
+                                Number(internal),
+
+                            subject:
+                                subject,
+
+                            mark:
+                                mark
+
+                        })
+
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to save mark"
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                error
+            );
+
+
+            alert(
+                "Error while saving marks."
+            );
+
+            return;
+        }
+
+    }
+
+
+    alert(
+        "All marks saved successfully!"
+    );
+
+}
+
+
+
+/* =====================================================
+   LOAD ATTENDANCE STUDENTS
+===================================================== */
+
+async function loadAttendanceStudents() {
+
+    const className =
+        document.getElementById(
+            "attendanceClass"
+        ).value;
+
+
+    const semester =
+        document.getElementById(
+            "attendanceSemester"
+        ).value;
+
+
+    const internal =
+        document.getElementById(
+            "attendanceInternal"
+        ).value;
+
+
+    const subject =
+        document.getElementById(
+            "attendanceSubject"
+        ).value;
+
+
+    const container =
+        document.getElementById(
+            "attendanceTableContainer"
+        );
+
+
+    if (!subject) {
+
+        container.innerHTML = `
+
+            <p class="empty-message">
+                Please add subjects first.
+            </p>
+
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML = `
+
+        <p class="empty-message">
+            Loading students...
+        </p>
+
+    `;
+
+
+    try {
+
+        const response =
+            await fetch(
+                "http://localhost:5000/students/" +
+                encodeURIComponent(
+                    className
+                )
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load students"
+            );
+
+        }
+
+
+        const studentData =
+            await response.json();
+
+
+        const students =
+            studentData.students || [];
+
+
+        if (!students.length) {
+
+            container.innerHTML = `
+
+                <p class="empty-message">
+                    No students found for ${className}.
+                </p>
+
+            `;
+
+            return;
+        }
+
+
+        /* LOAD EXISTING ATTENDANCE FROM MYSQL */
+
+        let existingAttendance = {};
+
+
+        try {
+
+            const attendanceResponse =
+                await fetch(
+                    "http://localhost:5000/attendance/" +
+                    encodeURIComponent(
+                        students[0].register_no
+                    )
+                );
+
+
+            if (attendanceResponse.ok) {
+
+                const attendanceData =
+                    await attendanceResponse.json();
+
+
+                const attendance =
+                    attendanceData.attendance || [];
+
+
+                attendance.forEach(item => {
+
+                    if (
+                        String(item.class_name).toLowerCase() ===
+                        String(className).toLowerCase() &&
+                        Number(item.semester) ===
+                        Number(semester) &&
+                        Number(item.internal_exam) ===
+                        Number(internal) &&
+                        String(item.subject).toLowerCase() ===
+                        String(subject).toLowerCase()
+                    ) {
+
+                        existingAttendance[
+                            item.register_no
+                        ] =
+                            item.attendance_percentage;
+
+                    }
+
+                });
+
+            }
+
+        } catch (error) {
+
+            console.log(
+                "Existing attendance could not be loaded:",
+                error
+            );
+
+        }
+
+
+        /*
+         Load attendance for every student
+         from MySQL
+        */
+
+        for (const student of students) {
+
+            try {
+
+                const attendanceResponse =
+                    await fetch(
+                        "http://localhost:5000/attendance/" +
+                        encodeURIComponent(
+                            student.register_no
+                        )
+                    );
+
+
+                if (attendanceResponse.ok) {
+
+                    const attendanceData =
+                        await attendanceResponse.json();
+
+
+                    const attendance =
+                        attendanceData.attendance || [];
+
+
+                    attendance.forEach(item => {
+
+                        if (
+                            String(item.class_name).toLowerCase() ===
+                            String(className).toLowerCase() &&
+                            Number(item.semester) ===
+                            Number(semester) &&
+                            Number(item.internal_exam) ===
+                            Number(internal) &&
+                            String(item.subject).toLowerCase() ===
+                            String(subject).toLowerCase()
+                        ) {
+
+                            existingAttendance[
+                                item.register_no
+                            ] =
+                                item.attendance_percentage;
+
+                        }
+
+                    });
+
+                }
+
+            } catch (error) {
+
+                console.log(
+                    "Attendance data not found for:",
+                    student.register_no
+                );
+
+            }
+
+        }
+
+
+        let html = `
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>S.No</th>
+                        <th>Register No</th>
+                        <th>Student Name</th>
+                        <th>Attendance %</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+        `;
+
+
+        students.forEach(
+            (student, index) => {
+
+                const oldAttendance =
+                    existingAttendance[
+                        student.register_no
+                    ] ?? "";
+
+
+                html += `
+
+                    <tr>
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+                            ${student.register_no}
+                        </td>
+
+                        <td>
+                            ${student.name}
+                        </td>
+
+                        <td>
+
+                            <input
+                                type="number"
+                                class="attendance-input"
+                                min="0"
+                                max="100"
+                                value="${oldAttendance}"
+                                placeholder="%"
+                                data-register="${student.register_no}"
+                            >
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        );
+
+
+        html += `
+
+                </tbody>
+
+            </table>
+
+            <button
+                class="save-all-btn"
+                onclick="saveAllAttendance()"
+            >
+                Save All Attendance
+            </button>
+
+        `;
+
+
+        container.innerHTML =
+            html;
+
+
+    } catch (error) {
+
+        console.error(
+            "Attendance load error:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+            <p class="error-message">
+                Unable to connect to CampusAI server.
+                Please make sure server.js is running.
+            </p>
+
+        `;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   SAVE ATTENDANCE
+   MYSQL VERSION
+===================================================== */
+
+async function saveAllAttendance() {
+
+    const className =
+        document.getElementById(
+            "attendanceClass"
+        ).value;
+
+
+    const semester =
+        document.getElementById(
+            "attendanceSemester"
+        ).value;
+
+
+    const internal =
+        document.getElementById(
+            "attendanceInternal"
+        ).value;
+
+
+    const subject =
+        document.getElementById(
+            "attendanceSubject"
+        ).value;
+
+
+    if (!subject) {
+
+        alert(
+            "Please select a subject."
+        );
+
+        return;
+    }
+
+
+    const inputs =
+        document.querySelectorAll(
+            ".attendance-input"
+        );
+
+
+    for (const input of inputs) {
+
+        const percentage =
+            input.value.trim();
+
+
+        if (percentage === "") {
+            continue;
+        }
+
+
+        const value =
+            Number(percentage);
+
+
+        if (
+            isNaN(value) ||
+            value < 0 ||
+            value > 100
+        ) {
+
+            alert(
+                "Attendance must be between 0 and 100."
+            );
+
+            return;
+        }
+
+
+        const registerNo =
+            input.dataset.register;
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "http://localhost:5000/attendance",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            register_no:
+                                registerNo,
+
+                            class_name:
+                                className,
+
+                            semester:
+                                Number(semester),
+
+                            internal_exam:
+                                Number(internal),
+
+                            subject:
+                                subject,
+
+                            attendance_percentage:
+                                value
+
+                        })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "Failed to save attendance"
+                );
+
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                "Attendance save error:",
+                error
+            );
+
+
+            alert(
+                "Error while saving attendance for Register No: " +
+                registerNo
+            );
+
+            return;
+        }
+
+    }
+
+
+    alert(
+        "All attendance saved successfully!"
+    );
+
+}
+
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function logout() {
+
+    const confirmLogout =
+        confirm(
+            "Are you sure you want to logout?"
+        );
+
+
+    if (!confirmLogout) {
+        return;
+    }
+
+
+    localStorage.removeItem(
+        "adminRole"
+    );
+
+
+    window.location.href =
+        "admin-login.html";
+
+}
+
+
+
+/* =====================================================
+   INITIAL LOAD
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadSubjects();
+
+        updateMarksSubjects();
+
+        updateAttendanceSubjects();
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>

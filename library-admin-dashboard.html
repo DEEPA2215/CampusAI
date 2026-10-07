@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Admin Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f8;
+        }
+
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background-color: #1e293b;
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 25px 15px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: none;
+            border-radius: 6px;
+            background-color: #334155;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .sidebar button:hover {
+            background-color: #475569;
+        }
+
+        .main {
+            margin-left: 220px;
+            padding: 30px;
+        }
+
+        .main h1 {
+            margin-bottom: 25px;
+            color: #1e293b;
+        }
+
+        .form-box {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .form-box h2 {
+            margin-bottom: 20px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        .add-btn {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .add-btn:hover {
+            background-color: #1d4ed8;
+        }
+
+        .table-box {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 14px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #1e293b;
+            color: white;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+        <h2>CampusAI</h2>
+
+        <button onclick="goDashboard()">Dashboard</button>
+
+        <button onclick="goLogout()">Logout</button>
+
+    </div>
+
+
+    <!-- Main Content -->
+    <div class="main">
+
+        <h1>Library Admin Dashboard</h1>
+
+
+        <!-- Add Book Form -->
+        <div class="form-box">
+
+            <h2>Add Book</h2>
+
+            <input
+                type="text"
+                id="bookName"
+                placeholder="Enter Book Name"
+            >
+
+            <input
+                type="number"
+                id="bookCount"
+                placeholder="Enter No. of Books"
+                min="1"
+            >
+
+            <select id="bookStatus">
+
+                <option value="">Select Status</option>
+
+                <option value="Available">
+                    Available
+                </option>
+
+                <option value="Not Available">
+                    Not Available
+                </option>
+
+            </select>
+
+            <button
+                class="add-btn"
+                onclick="addBook()"
+            >
+                Add Book
+            </button>
+
+        </div>
+
+
+        <!-- Books Table -->
+        <div class="table-box">
+
+            <h2>Library Books</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Books</th>
+                        <th>No. of Books</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody id="bookTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // Get existing books from localStorage
+        let books =
+            JSON.parse(localStorage.getItem("libraryBooks")) || [];
+
+
+        // Display books
+        function displayBooks() {
+
+            const table =
+                document.getElementById("bookTable");
+
+            table.innerHTML = "";
+
+
+            if (books.length === 0) {
+
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="no-data">
+                            No books added
+                        </td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+
+            books.forEach(function(book) {
+
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${book.name}</td>
+                    <td>${book.count}</td>
+                    <td>${book.status}</td>
+                `;
+
+                table.appendChild(row);
+
+            });
+
+        }
+
+
+        // Add new book
+        function addBook() {
+
+            const name =
+                document.getElementById("bookName").value.trim();
+
+            const count =
+                document.getElementById("bookCount").value;
+
+            const status =
+                document.getElementById("bookStatus").value;
+
+
+            if (name === "" || count === "" || status === "") {
+
+                alert("Please fill all fields");
+
+                return;
+            }
+
+
+            const newBook = {
+
+                name: name,
+
+                count: count,
+
+                status: status
+
+            };
+
+
+            books.push(newBook);
+
+
+            // Save to localStorage
+            localStorage.setItem(
+                "libraryBooks",
+                JSON.stringify(books)
+            );
+
+
+            // Clear form
+            document.getElementById("bookName").value = "";
+
+            document.getElementById("bookCount").value = "";
+
+            document.getElementById("bookStatus").value = "";
+
+
+            // Refresh table
+            displayBooks();
+
+
+            alert("Book added successfully!");
+
+        }
+
+
+        // Dashboard button
+        function goDashboard() {
+
+            window.location.href = "admin-role.html";
+
+        }
+
+
+        // Logout
+        function goLogout() {
+
+            localStorage.removeItem("adminRole");
+
+            window.location.href = "index.html";
+
+        }
+
+
+        // Display books when page loads
+        displayBooks();
+
+    </script>
+
+</body>
+</html>

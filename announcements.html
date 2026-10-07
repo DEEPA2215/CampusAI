@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Announcements</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f8;
+        }
+
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background-color: #1e293b;
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 25px 15px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 6px;
+            background-color: #334155;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+            text-align: left;
+        }
+
+        .sidebar button:hover {
+            background-color: #475569;
+        }
+
+        .main {
+            margin-left: 220px;
+            padding: 40px;
+        }
+
+        .main h1 {
+            color: #1e293b;
+            margin-bottom: 25px;
+        }
+
+        .announcement-box {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 14px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #1e293b;
+            color: white;
+        }
+
+        .no-data {
+            color: #777;
+            padding: 20px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+
+        <h2>CampusAI</h2>
+
+        <button onclick="goHome()">🏠 Home</button>
+
+        <button onclick="goComplaint()">📝 Complaint Status</button>
+
+        <button onclick="goFoodCourt()">🍴 Food Court</button>
+
+        <button onclick="goLibrary()">📚 Library</button>
+
+        <button onclick="goEvents()">📅 Events</button>
+
+        <button onclick="goAnnouncements()">📢 Announcements</button>
+
+    </div>
+
+
+    <div class="main">
+
+        <h1>Campus Announcements</h1>
+
+        <div class="announcement-box">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Announcement</th>
+                        <th>Date</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="announcementTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        let announcements =
+            JSON.parse(
+                localStorage.getItem("campusAnnouncements")
+            ) || [];
+
+
+        function displayAnnouncements() {
+
+            const table =
+                document.getElementById(
+                    "announcementTable"
+                );
+
+            table.innerHTML = "";
+
+
+            if (announcements.length === 0) {
+
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="2" class="no-data">
+                            No announcements added
+                        </td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+
+            announcements.forEach(
+                function(announcement) {
+
+                    table.innerHTML += `
+                        <tr>
+                            <td>
+                                ${announcement.text}
+                            </td>
+
+                            <td>
+                                ${announcement.date}
+                            </td>
+                        </tr>
+                    `;
+
+                }
+            );
+
+        }
+
+
+        function goHome() {
+            window.location.href =
+                "student-dashboard.html";
+        }
+
+        function goComplaint() {
+            window.location.href =
+                "complaint.html";
+        }
+
+        function goFoodCourt() {
+            window.location.href =
+                "foodcourt.html";
+        }
+
+        function goLibrary() {
+            window.location.href =
+                "library.html";
+        }
+
+        function goEvents() {
+            window.location.href =
+                "events.html";
+        }
+
+        function goAnnouncements() {
+            window.location.href =
+                "announcements.html";
+        }
+
+
+        displayAnnouncements();
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Role Selection</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f8;
+
+            min-height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+        }
+
+        .container {
+            background-color: white;
+
+            width: 450px;
+
+            padding: 35px;
+
+            border-radius: 12px;
+
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+
+            text-align: center;
+        }
+
+        h1 {
+            color: #1e293b;
+
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+
+            margin-bottom: 25px;
+        }
+
+        .role-btn {
+            width: 100%;
+
+            padding: 14px;
+
+            margin-bottom: 12px;
+
+            border: none;
+
+            border-radius: 7px;
+
+            background-color: #2563eb;
+
+            color: white;
+
+            font-size: 16px;
+
+            cursor: pointer;
+        }
+
+        .role-btn:hover {
+            background-color: #1d4ed8;
+        }
+
+        .back-btn {
+            width: 100%;
+
+            padding: 12px;
+
+            margin-top: 10px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 7px;
+
+            background-color: white;
+
+            color: #333;
+
+            font-size: 15px;
+
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background-color: #f1f5f9;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="container">
+
+        <h1>
+            CampusAI Admin
+        </h1>
+
+        <p class="subtitle">
+            Select your admin role
+        </p>
+
+
+        <!-- Complaint Admin -->
+
+        <button
+            class="role-btn"
+            onclick="selectRole('complaint')"
+        >
+            📝 Complaint Admin
+        </button>
+
+
+        <!-- Library Admin -->
+
+        <button
+            class="role-btn"
+            onclick="selectRole('library')"
+        >
+            📚 Library Admin
+        </button>
+
+
+        <!-- Food Court Admin -->
+
+        <button
+            class="role-btn"
+            onclick="selectRole('foodcourt')"
+        >
+            🍴 Food Court Admin
+        </button>
+
+
+        <!-- Class Advisor -->
+
+        <button
+            class="role-btn"
+            onclick="selectRole('advisor')"
+        >
+            👨‍🏫 Class Advisor
+        </button>
+
+
+        <!-- Events Admin -->
+
+        <button
+            class="role-btn"
+            onclick="selectRole('events')"
+        >
+            📅 Events Admin
+        </button>
+
+
+        <!-- Announcement Admin -->
+
+        <button
+            class="role-btn"
+            onclick="selectRole('announcement')"
+        >
+            📢 Announcement Admin
+        </button>
+
+
+        <!-- Back -->
+
+        <button
+            class="back-btn"
+            onclick="goBack()"
+        >
+            ← Back
+        </button>
+
+    </div>
+
+
+    <script>
+
+        function selectRole(role) {
+
+            /*
+                Save selected admin role
+            */
+
+            localStorage.setItem(
+                "adminRole",
+                role
+            );
+
+
+            /*
+                Go to common admin login
+            */
+
+            window.location.href =
+                "admin-login.html";
+
+        }
+
+
+        function goBack() {
+
+            window.location.href =
+                "index.html";
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

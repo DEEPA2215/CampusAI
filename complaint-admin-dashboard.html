@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Complaint Admin Dashboard</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f8;
+        }
+
+        /* Sidebar */
+
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background-color: #1e293b;
+            color: white;
+
+            position: fixed;
+            left: 0;
+            top: 0;
+
+            padding: 25px 15px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar button {
+            width: 100%;
+
+            padding: 12px;
+            margin-bottom: 12px;
+
+            border: none;
+            border-radius: 6px;
+
+            background-color: #334155;
+            color: white;
+
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .sidebar button:hover {
+            background-color: #475569;
+        }
+
+
+        /* Main */
+
+        .main {
+            margin-left: 220px;
+            padding: 30px;
+        }
+
+        .main h1 {
+            color: #1e293b;
+            margin-bottom: 25px;
+        }
+
+
+        /* Table Box */
+
+        .table-box {
+            background-color: white;
+
+            padding: 25px;
+
+            border-radius: 10px;
+
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+            overflow-x: auto;
+        }
+
+        .table-box h2 {
+            margin-bottom: 15px;
+        }
+
+
+        /* Table */
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+
+            padding: 14px;
+
+            text-align: center;
+        }
+
+        th {
+            background-color: #1e293b;
+            color: white;
+        }
+
+
+        /* Status */
+
+        .status-select {
+            padding: 8px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+        }
+
+
+        /* No Complaint */
+
+        .no-data {
+            text-align: center;
+
+            padding: 20px;
+
+            color: #777;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- Sidebar -->
+
+    <div class="sidebar">
+
+        <h2>CampusAI</h2>
+
+        <button onclick="goDashboard()">
+            Dashboard
+        </button>
+
+        <button onclick="goLogout()">
+            Logout
+        </button>
+
+    </div>
+
+
+
+    <!-- Main Content -->
+
+    <div class="main">
+
+        <h1>
+            Complaint Admin Dashboard
+        </h1>
+
+
+        <div class="table-box">
+
+            <h2>
+                Student Complaints
+            </h2>
+
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Complaint ID
+                        </th>
+
+                        <th>
+                            Complaint About
+                        </th>
+
+                        <th>
+                            Statement
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="complaintTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+
+    <script>
+
+        // =====================================================
+        // BACKEND URL
+        // =====================================================
+
+        const API_URL =
+            "http://localhost:5000";
+
+
+        // =====================================================
+        // COMPLAINTS ARRAY
+        // =====================================================
+
+        let complaints = [];
+
+
+        // =====================================================
+        // LOAD ALL COMPLAINTS FROM MYSQL
+        // =====================================================
+
+        async function loadComplaints() {
+
+            const table =
+                document.getElementById(
+                    "complaintTable"
+                );
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="4" class="no-data">
+                        Loading complaints...
+                    </td>
+                </tr>
+            `;
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/complaints`
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "Complaint API response:",
+                    data
+                );
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.error ||
+                        data.message ||
+                        "Failed to load complaints"
+                    );
+
+                }
+
+
+                complaints =
+                    data.complaints || [];
+
+
+                displayComplaints();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Complaint loading error:",
+                    error
+                );
+
+
+                table.innerHTML = `
+                    <tr>
+                        <td
+                            colspan="4"
+                            class="no-data"
+                        >
+                            Unable to load complaints.
+                            <br><br>
+                            Please check whether the backend server is running.
+                        </td>
+                    </tr>
+                `;
+
+            }
+
+        }
+
+
+        // =====================================================
+        // DISPLAY COMPLAINTS
+        // =====================================================
+
+        function displayComplaints() {
+
+            const table =
+                document.getElementById(
+                    "complaintTable"
+                );
+
+            table.innerHTML = "";
+
+
+            // -------------------------------------------------
+            // NO COMPLAINTS
+            // -------------------------------------------------
+
+            if (
+                complaints.length === 0
+            ) {
+
+                table.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="4"
+                            class="no-data"
+                        >
+                            No complaints added
+                        </td>
+
+                    </tr>
+
+                `;
+
+                return;
+
+            }
+
+
+            // -------------------------------------------------
+            // DISPLAY EACH COMPLAINT
+            // -------------------------------------------------
+
+            complaints.forEach(
+                function(complaint, index) {
+
+                    const row =
+                        document.createElement("tr");
+
+
+                    // Complaint ID
+
+                    const complaintId =
+                        complaint.complaint_id ||
+                        complaint.id ||
+                        "N/A";
+
+
+                    // Complaint About
+
+                    const complaintAbout =
+                        complaint.complaint_about ||
+                        complaint.about ||
+                        "N/A";
+
+
+                    // Statement
+
+                    const statement =
+                        complaint.statement ||
+                        "N/A";
+
+
+                    // Status
+
+                    const status =
+                        complaint.status ||
+                        "Pending";
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            ${complaintId}
+                        </td>
+
+
+                        <td>
+                            ${complaintAbout}
+                        </td>
+
+
+                        <td>
+                            ${statement}
+                        </td>
+
+
+                        <td>
+
+                            <select
+                                class="status-select"
+                                onchange="changeStatus(${index}, this.value)"
+                            >
+
+                                <option
+                                    value="Pending"
+                                    ${
+                                        status === "Pending"
+                                        ? "selected"
+                                        : ""
+                                    }
+                                >
+                                    Pending
+                                </option>
+
+
+                                <option
+                                    value="Solved"
+                                    ${
+                                        status === "Solved"
+                                        ? "selected"
+                                        : ""
+                                    }
+                                >
+                                    Solved
+                                </option>
+
+                            </select>
+
+                        </td>
+
+                    `;
+
+
+                    table.appendChild(row);
+
+                }
+            );
+
+        }
+
+
+        // =====================================================
+        // CHANGE COMPLAINT STATUS
+        // =====================================================
+
+        async function changeStatus(
+            index,
+            newStatus
+        ) {
+
+            const complaint =
+                complaints[index];
+
+
+            const complaintId =
+                complaint.complaint_id ||
+                complaint.id;
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/complaints/${complaintId}/status`,
+                        {
+
+                            method: "PUT",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                status: newStatus
+                            })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.error ||
+                        data.message ||
+                        "Status update failed"
+                    );
+
+                }
+
+
+                complaints[index].status =
+                    newStatus;
+
+
+                alert(
+                    "Complaint status updated to " +
+                    newStatus
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Status update error:",
+                    error
+                );
+
+
+                alert(
+                    "Status update failed."
+                );
+
+
+                loadComplaints();
+
+            }
+
+        }
+
+
+        // =====================================================
+        // DASHBOARD
+        // =====================================================
+
+        function goDashboard() {
+
+            window.location.href =
+                "admin-role.html";
+
+        }
+
+
+        // =====================================================
+        // LOGOUT
+        // =====================================================
+
+        function goLogout() {
+
+            localStorage.removeItem(
+                "adminRole"
+            );
+
+            window.location.href =
+                "index.html";
+
+        }
+
+
+        // =====================================================
+        // LOAD COMPLAINTS WHEN PAGE OPENS
+        // =====================================================
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                loadComplaints();
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

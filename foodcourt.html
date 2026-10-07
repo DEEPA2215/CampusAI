@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Food Court - CampusAI</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 230px;
+            height: 100vh;
+            background-color: #2c3e50;
+            color: white;
+            padding-top: 25px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 16px 25px;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .sidebar a:hover {
+            background-color: #1f2d3a;
+        }
+
+        .main {
+            margin-left: 230px;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        /* Search */
+
+        .search-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .search-box input {
+            width: 75%;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        .search-box button {
+            padding: 13px 20px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .search-box button:hover {
+            background-color: #1f2d3a;
+        }
+
+        /* Table */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 14px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        .no-data {
+            color: #777;
+            padding: 20px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- Sidebar -->
+
+    <div class="sidebar">
+
+        <h2>CampusAI</h2>
+
+        <a onclick="goHome()">
+            🏠 Home
+        </a>
+
+        <a onclick="goComplaint()">
+            📝 Complaint Status
+        </a>
+
+        <a onclick="goFoodCourt()">
+            🍴 Food Court
+        </a>
+
+        <a onclick="goLibrary()">
+            📚 Library
+        </a>
+
+    </div>
+
+
+    <!-- Main -->
+
+    <div class="main">
+
+        <h1>🍴 Food Court</h1>
+
+
+        <!-- Search -->
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="searchFood"
+                placeholder="Search food..."
+                onkeyup="searchFood()"
+            >
+
+            <button onclick="searchFood()">
+                Search
+            </button>
+
+        </div>
+
+
+        <!-- Food Table -->
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Available Food</th>
+
+                    <th>Price</th>
+
+                    <th>No. of Food Available</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="foodTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <script>
+
+        // =====================================================
+        // BACKEND URL
+        // =====================================================
+
+        const API_URL =
+            "http://localhost:5000";
+
+
+        let foods = [];
+
+
+        // =====================================================
+        // LOAD FOOD FROM MYSQL
+        // =====================================================
+
+        async function loadFoods() {
+
+            const table =
+                document.getElementById("foodTable");
+
+
+            table.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="3"
+                        class="no-data"
+                    >
+                        Loading food items...
+                    </td>
+
+                </tr>
+
+            `;
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/foodcourt`
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.error ||
+                        data.message ||
+                        "Unable to load food items"
+                    );
+
+                }
+
+
+                foods =
+                    data.items || [];
+
+
+                displayFoods(foods);
+
+
+            } catch (error) {
+
+                console.error(
+                    "Food loading error:",
+                    error
+                );
+
+
+                table.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="3"
+                            class="no-data"
+                        >
+                            ❌ Unable to load food items.
+                            <br><br>
+                            Please make sure the server is running.
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+
+        }
+
+
+        // =====================================================
+        // DISPLAY FOOD
+        // =====================================================
+
+        function displayFoods(foodList) {
+
+            const table =
+                document.getElementById("foodTable");
+
+
+            table.innerHTML = "";
+
+
+            if (
+                foodList.length === 0
+            ) {
+
+                table.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="3"
+                            class="no-data"
+                        >
+                            No food items available
+                        </td>
+
+                    </tr>
+
+                `;
+
+                return;
+
+            }
+
+
+            foodList.forEach(
+                function(food) {
+
+                    table.innerHTML += `
+
+                        <tr>
+
+                            <td>
+                                ${food.name}
+                            </td>
+
+                            <td>
+                                ₹${food.price}
+                            </td>
+
+                            <td>
+                                ${food.quantity}
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                }
+            );
+
+        }
+
+
+        // =====================================================
+        // SEARCH FOOD
+        // =====================================================
+
+        function searchFood() {
+
+            const searchText =
+                document
+                    .getElementById("searchFood")
+                    .value
+                    .toLowerCase()
+                    .trim();
+
+
+            const filteredFoods =
+                foods.filter(
+                    function(food) {
+
+                        return String(food.name)
+                            .toLowerCase()
+                            .includes(searchText);
+
+                    }
+                );
+
+
+            displayFoods(
+                filteredFoods
+            );
+
+        }
+
+
+        // =====================================================
+        // NAVIGATION
+        // =====================================================
+
+        function goHome() {
+
+            window.location.href =
+                "student-dashboard.html";
+
+        }
+
+
+        function goComplaint() {
+
+            window.location.href =
+                "complaint.html";
+
+        }
+
+
+        function goFoodCourt() {
+
+            window.location.href =
+                "foodcourt.html";
+
+        }
+
+
+        function goLibrary() {
+
+            window.location.href =
+                "library.html";
+
+        }
+
+
+        // =====================================================
+        // START
+        // =====================================================
+
+        loadFoods();
+
+    </script>
+
+</body>
+
+</html>

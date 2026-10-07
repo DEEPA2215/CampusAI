@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CampusAI - Complaint</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6fb;
+            min-height: 100vh;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+
+            width: 250px;
+            height: 100vh;
+
+            background: linear-gradient(
+                180deg,
+                #4b3f72,
+                #667eea
+            );
+
+            color: white;
+            padding: 25px 15px;
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 35px;
+        }
+
+        .menu-title {
+            font-size: 12px;
+            opacity: 0.7;
+            margin: 10px 15px 15px;
+        }
+
+        .menu-item {
+            width: 100%;
+            padding: 15px;
+
+            margin-bottom: 10px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: transparent;
+            color: white;
+
+            text-align: left;
+            font-size: 16px;
+
+            cursor: pointer;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ================= MAIN ================= */
+
+        .main {
+            margin-left: 250px;
+            padding: 35px;
+            max-width: 1200px;
+        }
+
+        .page-title {
+            color: #4b3f72;
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .page-description {
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        /* ================= TABS ================= */
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 14px 20px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: white;
+            color: #4b3f72;
+
+            font-weight: bold;
+            cursor: pointer;
+
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .tab-button:hover {
+            background: #eeeeff;
+        }
+
+        .tab-button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        /* ================= CARD ================= */
+
+        .card {
+            background: white;
+
+            padding: 30px;
+
+            border-radius: 18px;
+
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h2 {
+            color: #4b3f72;
+            margin-bottom: 25px;
+        }
+
+        /* ================= FORM ================= */
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label.title {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        /* ================= CATEGORY ================= */
+
+        .category-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .category-option {
+            padding: 14px 8px;
+
+            border: 2px solid #ddd;
+            border-radius: 10px;
+
+            text-align: center;
+            cursor: pointer;
+
+            background: white;
+        }
+
+        .category-option:hover {
+            border-color: #667eea;
+        }
+
+        .category-option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .category-option input {
+            display: none;
+        }
+
+        /* ================= LANGUAGE ================= */
+
+        .language-container {
+            display: flex;
+            gap: 15px;
+        }
+
+        .language-option {
+            padding: 12px 30px;
+
+            border: 2px solid #ddd;
+            border-radius: 10px;
+
+            cursor: pointer;
+            background: white;
+        }
+
+        .language-option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .language-option input {
+            display: none;
+        }
+
+        /* ================= TEXTAREA ================= */
+
+        textarea {
+            width: 100%;
+
+            min-height: 150px;
+
+            padding: 15px;
+
+            border: 1px solid #ddd;
+            border-radius: 10px;
+
+            resize: vertical;
+            outline: none;
+
+            font-size: 15px;
+        }
+
+        textarea:focus {
+            border-color: #667eea;
+        }
+
+        /* ================= SUBMIT ================= */
+
+        .submit-button {
+            width: 100%;
+
+            padding: 16px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: #4b3f72;
+            color: white;
+
+            font-size: 17px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background: #362d55;
+        }
+
+        /* ================= SUCCESS ================= */
+
+        .success {
+            display: none;
+
+            padding: 18px;
+
+            margin-bottom: 20px;
+
+            border-radius: 10px;
+
+            background: #e8f7ed;
+            color: #26733b;
+
+            line-height: 1.6;
+        }
+
+        /* ================= ERROR ================= */
+
+        .error {
+            display: none;
+
+            padding: 18px;
+
+            margin-bottom: 20px;
+
+            border-radius: 10px;
+
+            background: #f8d7da;
+            color: #721c24;
+
+            line-height: 1.6;
+        }
+
+        /* ================= COMPLAINT CARD ================= */
+
+        .complaint-card {
+            padding: 20px;
+
+            margin-bottom: 15px;
+
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+
+            background: #fafafa;
+        }
+
+        .complaint-card h3 {
+            color: #4b3f72;
+            margin-bottom: 12px;
+        }
+
+        .complaint-card p {
+            color: #555;
+            margin: 8px 0;
+        }
+
+        /* ================= STATUS ================= */
+
+        .status {
+            display: inline-block;
+
+            padding: 6px 14px;
+
+            border-radius: 20px;
+
+            background: #fff3cd;
+            color: #856404;
+
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .status.solved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.progress {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .status.rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* ================= EMPTY ================= */
+
+        .empty {
+            text-align: center;
+
+            padding: 45px;
+
+            color: #777;
+
+            background: #fafafa;
+
+            border-radius: 12px;
+        }
+
+        /* ================= HIDDEN ================= */
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 850px) {
+
+            .category-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .category-container {
+                grid-template-columns: 1fr;
+            }
+
+            .language-container {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <div class="sidebar">
+
+        <div class="logo">
+            CAMPUS AI
+        </div>
+
+        <div class="menu-title">
+            MENU
+        </div>
+
+        <button
+            class="menu-item"
+            onclick="goHome()">
+
+            🏠 HOME
+
+        </button>
+
+        <button
+            class="menu-item active">
+
+            📋 COMPLAINT STATUS
+
+        </button>
+
+        <button
+            class="menu-item"
+            onclick="goFoodCourt()">
+
+            🍴 FOOD COURT
+
+        </button>
+
+        <button
+            class="menu-item"
+            onclick="goLibrary()">
+
+            📚 LIBRARY
+
+        </button>
+
+    </div>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <div class="main">
+
+        <h1 class="page-title">
+            📋 COMPLAINT MODULE
+        </h1>
+
+        <p class="page-description">
+            Submit and track your complaints
+        </p>
+
+
+        <!-- SUCCESS -->
+
+        <div
+            id="successMessage"
+            class="success">
+        </div>
+
+
+        <!-- ERROR -->
+
+        <div
+            id="errorMessage"
+            class="error">
+        </div>
+
+
+        <!-- ================= TABS ================= -->
+
+        <div class="tabs">
+
+            <button
+                id="tabComplaint"
+                class="tab-button active"
+                onclick="showSection('complaint')">
+
+                📋 COMPLAINT
+
+            </button>
+
+            <button
+                id="tabStatus"
+                class="tab-button"
+                onclick="showSection('status')">
+
+                📊 MY COMPLAINT STATUS
+
+            </button>
+
+        </div>
+
+
+        <!-- =====================================================
+             COMPLAINT SECTION
+        ====================================================== -->
+
+        <div
+            id="complaintSection"
+            class="section active">
+
+            <div class="card">
+
+                <h2>
+                    Submit New Complaint
+                </h2>
+
+
+                <form
+                    id="complaintForm"
+                    onsubmit="submitComplaint(event)">
+
+
+                    <!-- ABOUT -->
+
+                    <div class="form-group">
+
+                        <label class="title">
+                            About Complaint
+                        </label>
+
+                        <div class="category-container">
+
+                            <label class="category-option">
+
+                                <input
+                                    type="radio"
+                                    name="category"
+                                    value="Lab"
+                                    required>
+
+                                🧪 Lab
+
+                            </label>
+
+
+                            <label class="category-option">
+
+                                <input
+                                    type="radio"
+                                    name="category"
+                                    value="Electricity"
+                                    required>
+
+                                ⚡ Electricity
+
+                            </label>
+
+
+                            <label class="category-option">
+
+                                <input
+                                    type="radio"
+                                    name="category"
+                                    value="Hostel"
+                                    required>
+
+                                🏠 Hostel
+
+                            </label>
+
+
+                            <label class="category-option">
+
+                                <input
+                                    type="radio"
+                                    name="category"
+                                    value="Classroom"
+                                    required>
+
+                                🏫 Classroom
+
+                            </label>
+
+
+                            <label class="category-option">
+
+                                <input
+                                    type="radio"
+                                    name="category"
+                                    value="Faculty"
+                                    required>
+
+                                👨‍🏫 Faculty
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- LANGUAGE -->
+
+                    <div class="form-group">
+
+                        <label class="title">
+                            Choose Language
+                        </label>
+
+                        <div class="language-container">
+
+                            <label class="language-option">
+
+                                <input
+                                    type="radio"
+                                    name="language"
+                                    value="Tamil"
+                                    required>
+
+                                தமிழ்
+
+                            </label>
+
+
+                            <label class="language-option">
+
+                                <input
+                                    type="radio"
+                                    name="language"
+                                    value="English"
+                                    required>
+
+                                English
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STATEMENT -->
+
+                    <div class="form-group">
+
+                        <label class="title">
+                            Complaint Statement
+                        </label>
+
+                        <textarea
+                            id="statement"
+                            placeholder="Enter your complaint statement..."
+                            required></textarea>
+
+                    </div>
+
+
+                    <!-- SUBMIT -->
+
+                    <button
+                        type="submit"
+                        class="submit-button"
+                        id="submitButton">
+
+                        SUBMIT COMPLAINT
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             MY STATUS
+        ====================================================== -->
+
+        <div
+            id="statusSection"
+            class="section">
+
+            <div class="card">
+
+                <h2>
+                    📊 My Complaint Status
+                </h2>
+
+                <div id="statusList">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        /* =====================================================
+           API
+        ====================================================== */
+
+        const API_URL =
+            "http://localhost:5000";
+
+
+        /* =====================================================
+           GET REGISTER NUMBER
+        ====================================================== */
+
+        function getRegisterNumber() {
+
+            return (
+                localStorage.getItem("register_no") ||
+                localStorage.getItem("registerNo") ||
+                localStorage.getItem("registerNumber") ||
+                localStorage.getItem("studentRegisterNo") ||
+                ""
+            );
+
+        }
+
+
+        /* =====================================================
+           SHOW SECTION
+        ====================================================== */
+
+        function showSection(section) {
+
+            document
+                .querySelectorAll(".section")
+                .forEach(function(item) {
+
+                    item.classList.remove("active");
+
+                });
+
+
+            document
+                .querySelectorAll(".tab-button")
+                .forEach(function(item) {
+
+                    item.classList.remove("active");
+
+                });
+
+
+            if (section === "complaint") {
+
+                document
+                    .getElementById("complaintSection")
+                    .classList.add("active");
+
+                document
+                    .getElementById("tabComplaint")
+                    .classList.add("active");
+
+            }
+
+
+            if (section === "status") {
+
+                document
+                    .getElementById("statusSection")
+                    .classList.add("active");
+
+                document
+                    .getElementById("tabStatus")
+                    .classList.add("active");
+
+                loadStatus();
+
+            }
+
+        }
+
+
+        /* =====================================================
+           CATEGORY SELECT
+        ====================================================== */
+
+        document
+            .querySelectorAll(
+                ".category-option input"
+            )
+            .forEach(function(input) {
+
+                input.addEventListener(
+                    "change",
+                    function() {
+
+                        document
+                            .querySelectorAll(
+                                ".category-option"
+                            )
+                            .forEach(function(option) {
+
+                                option.classList.remove(
+                                    "selected"
+                                );
+
+                            });
+
+                        this
+                            .parentElement
+                            .classList.add(
+                                "selected"
+                            );
+
+                    }
+                );
+
+            });
+
+
+        /* =====================================================
+           LANGUAGE SELECT
+        ====================================================== */
+
+        document
+            .querySelectorAll(
+                ".language-option input"
+            )
+            .forEach(function(input) {
+
+                input.addEventListener(
+                    "change",
+                    function() {
+
+                        document
+                            .querySelectorAll(
+                                ".language-option"
+                            )
+                            .forEach(function(option) {
+
+                                option.classList.remove(
+                                    "selected"
+                                );
+
+                            });
+
+                        this
+                            .parentElement
+                            .classList.add(
+                                "selected"
+                            );
+
+                    }
+                );
+
+            });
+
+
+        /* =====================================================
+           SUBMIT COMPLAINT
+        ====================================================== */
+
+        async function submitComplaint(event) {
+
+            event.preventDefault();
+
+
+            const register_no =
+                getRegisterNumber();
+
+
+            if (!register_no) {
+
+                showError(
+                    "Register number not found. Please login again."
+                );
+
+                return;
+
+            }
+
+
+            const categoryInput =
+                document.querySelector(
+                    'input[name="category"]:checked'
+                );
+
+
+            const languageInput =
+                document.querySelector(
+                    'input[name="language"]:checked'
+                );
+
+
+            if (!categoryInput || !languageInput) {
+
+                showError(
+                    "Please select complaint category and language."
+                );
+
+                return;
+
+            }
+
+
+            const category =
+                categoryInput.value;
+
+
+            const language =
+                languageInput.value;
+
+
+            const statement =
+                document
+                    .getElementById("statement")
+                    .value
+                    .trim();
+
+
+            if (!statement) {
+
+                showError(
+                    "Please enter complaint statement."
+                );
+
+                return;
+
+            }
+
+
+            const complaintId =
+                "CMP" +
+                Date.now()
+                    .toString()
+                    .slice(-6);
+
+
+            const submitButton =
+                document.getElementById(
+                    "submitButton"
+                );
+
+
+            submitButton.disabled = true;
+
+            submitButton.innerText =
+                "SUBMITTING...";
+
+
+            hideMessages();
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/complaints`,
+                        {
+
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                register_no:
+                                    register_no,
+
+                                complaint_id:
+                                    complaintId,
+
+                                complaint_about:
+                                    category,
+
+                                language:
+                                    language,
+
+                                statement:
+                                    statement,
+
+                                status:
+                                    "Pending"
+
+                            })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "Complaint submit response:",
+                    data
+                );
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        data.error ||
+                        "Complaint submission failed"
+                    );
+
+                }
+
+
+                const finalComplaintId =
+                    data.complaint_id ||
+                    complaintId;
+
+
+                showSuccess(
+
+                    "<strong>Complaint submitted successfully! ✅</strong>" +
+
+                    "<br>Complaint ID: <strong>" +
+                    finalComplaintId +
+                    "</strong>" +
+
+                    "<br>Status: <strong>Pending</strong>"
+
+                );
+
+
+                document
+                    .getElementById(
+                        "complaintForm"
+                    )
+                    .reset();
+
+
+                document
+                    .querySelectorAll(
+                        ".selected"
+                    )
+                    .forEach(function(item) {
+
+                        item.classList.remove(
+                            "selected"
+                        );
+
+                    });
+
+
+                /*
+
+                    After submitting,
+                    open My Complaint Status.
+
+                */
+
+                setTimeout(function() {
+
+                    showSection("status");
+
+                }, 700);
+
+
+            } catch (error) {
+
+                console.error(
+                    "Complaint submit error:",
+                    error
+                );
+
+
+                showError(
+                    error.message ||
+                    "Unable to submit complaint."
+                );
+
+
+            } finally {
+
+                submitButton.disabled =
+                    false;
+
+                submitButton.innerText =
+                    "SUBMIT COMPLAINT";
+
+            }
+
+        }
+
+
+        /* =====================================================
+           LOAD MY COMPLAINT STATUS
+        ====================================================== */
+
+        async function loadStatus() {
+
+            const container =
+                document.getElementById(
+                    "statusList"
+                );
+
+
+            container.innerHTML = `
+
+                <div class="empty">
+
+                    Loading complaints...
+
+                </div>
+
+            `;
+
+
+            const register_no =
+                getRegisterNumber();
+
+
+            if (!register_no) {
+
+                container.innerHTML = `
+
+                    <div class="empty">
+
+                        ❌
+
+                        <br><br>
+
+                        Register number not found.
+                        Please login again.
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/complaints/${encodeURIComponent(register_no)}`
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "Student complaints:",
+                    data
+                );
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.error ||
+                        data.message ||
+                        "Unable to load complaints"
+                    );
+
+                }
+
+
+                const complaints =
+                    data.complaints || [];
+
+
+                container.innerHTML = "";
+
+
+                if (complaints.length === 0) {
+
+                    container.innerHTML = `
+
+                        <div class="empty">
+
+                            📋
+
+                            <br><br>
+
+                            No complaints found.
+
+                        </div>
+
+                    `;
+
+                    return;
+
+                }
+
+
+                complaints.forEach(
+                    function(complaint) {
+
+                        container.innerHTML +=
+                            createComplaintCard(
+                                complaint
+                            );
+
+                    }
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Load status error:",
+                    error
+                );
+
+
+                container.innerHTML = `
+
+                    <div class="empty">
+
+                        ❌
+
+                        <br><br>
+
+                        Unable to load complaint status.
+
+                    </div>
+
+                `;
+
+            }
+
+        }
+
+
+        /* =====================================================
+           CREATE COMPLAINT CARD
+        ====================================================== */
+
+        function createComplaintCard(
+            complaint
+        ) {
+
+            const status =
+                complaint.status ||
+                "Pending";
+
+
+            let statusClass = "";
+
+
+            if (
+                status.toLowerCase() ===
+                "solved"
+            ) {
+
+                statusClass = "solved";
+
+            }
+
+
+            if (
+                status.toLowerCase() ===
+                "in progress"
+            ) {
+
+                statusClass = "progress";
+
+            }
+
+
+            if (
+                status.toLowerCase() ===
+                "rejected"
+            ) {
+
+                statusClass = "rejected";
+
+            }
+
+
+            const complaintId =
+                complaint.complaint_id ||
+                complaint.id ||
+                "N/A";
+
+
+            const category =
+                complaint.complaint_about ||
+                complaint.about ||
+                complaint.category ||
+                "N/A";
+
+
+            const language =
+                complaint.language ||
+                "N/A";
+
+
+            const statement =
+                complaint.statement ||
+                "N/A";
+
+
+            const date =
+                complaint.created_at ||
+                complaint.date ||
+                "N/A";
+
+
+            return `
+
+                <div class="complaint-card">
+
+                    <h3>
+
+                        Complaint ID:
+                        ${complaintId}
+
+                    </h3>
+
+
+                    <p>
+
+                        <strong>
+                            About:
+                        </strong>
+
+                        ${category}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Language:
+                        </strong>
+
+                        ${language}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Statement:
+                        </strong>
+
+                        ${statement}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Date:
+                        </strong>
+
+                        ${date}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Status:
+                        </strong>
+
+                        <span
+                            class="status ${statusClass}">
+
+                            ${status}
+
+                        </span>
+
+                    </p>
+
+                </div>
+
+            `;
+
+        }
+
+
+        /* =====================================================
+           SUCCESS MESSAGE
+        ====================================================== */
+
+        function showSuccess(message) {
+
+            const success =
+                document.getElementById(
+                    "successMessage"
+                );
+
+
+            success.innerHTML =
+                message;
+
+
+            success.style.display =
+                "block";
+
+        }
+
+
+        /* =====================================================
+           ERROR MESSAGE
+        ====================================================== */
+
+        function showError(message) {
+
+            const error =
+                document.getElementById(
+                    "errorMessage"
+                );
+
+
+            error.innerHTML =
+                "<strong>Error:</strong> " +
+                message;
+
+
+            error.style.display =
+                "block";
+
+        }
+
+
+        /* =====================================================
+           HIDE MESSAGES
+        ====================================================== */
+
+        function hideMessages() {
+
+            document.getElementById(
+                "successMessage"
+            ).style.display = "none";
+
+
+            document.getElementById(
+                "errorMessage"
+            ).style.display = "none";
+
+        }
+
+
+        /* =====================================================
+           NAVIGATION
+        ====================================================== */
+
+        function goHome() {
+
+            window.location.href =
+                "student-dashboard.html";
+
+        }
+
+
+        function goFoodCourt() {
+
+            window.location.href =
+                "food-court.html";
+
+        }
+
+
+        function goLibrary() {
+
+            window.location.href =
+                "library.html";
+
+        }
+
+
+        /* =====================================================
+           INITIAL
+        ====================================================== */
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                console.log(
+                    "Student register number:",
+                    getRegisterNumber()
+                );
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>
